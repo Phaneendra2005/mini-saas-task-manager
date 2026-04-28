@@ -15,14 +15,10 @@ const allowedOrigins = [
   'https://mini-saas-task-manager-tau.vercel.app'
 ];
 
+const cors = require("cors");
+
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true,   // allow ALL origins
   credentials: true,
 }));
 
