@@ -9,9 +9,20 @@ const errorHandler = require('./middlewares/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
+// ✅ CORS configuration (FIXED)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://mini-saas-task-manager-tau.vercel.app'
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
@@ -28,21 +39,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// 404 handler for unknown routes
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Global error handler (must be last)
+// Global error handler
 app.use(errorHandler);
 
-// Database sync + server start
+// Start server
 const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log('✅ Database connection established successfully.');
 
-    // sync({ alter: true }) updates table schema without dropping data
     await sequelize.sync({ alter: true });
     console.log('✅ Database models synchronized.');
 
