@@ -15,7 +15,6 @@ const allowedOrigins = [
   'https://mini-saas-task-manager-tau.vercel.app'
 ];
 
-const cors = require("cors");
 
 app.use(cors({
   origin: true,   // allow ALL origins
